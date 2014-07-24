@@ -24,3 +24,5 @@ Example Usage:
     	[buttonLessText]: string/function  // same as above for the "less" function
     
     }"></div>
+
+Currently requires jQuery
