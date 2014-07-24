@@ -10,6 +10,8 @@ The binding will insert a "more" button to allow the user
 to update the observable, but it can also be updated
 programmatically
 
+[See a Demo](http://jsfiddle.net/nicmendoza/kFX4c/")
+
 Example Usage:
 =============
 

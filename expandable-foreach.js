@@ -38,7 +38,7 @@
 
 ko.bindingHandlers['expandableForEach'] = {
 	init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
-		ko.bindingHandlers['foreach'].init(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
+		return ko.bindingHandlers['foreach'].init(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
 	},
 	update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext){
 		
@@ -51,19 +51,17 @@ ko.bindingHandlers['expandableForEach'] = {
 			buttonLessText: 'Less'
 		},
 			bindingValue = valueAccessor(),
-			collection = ko.utils.unwrapObservable( bindingValue.list || bindingValue),
+			collection = ko.utils.unwrapObservable( bindingValue.items || bindingValue),
 			options = typeof bindingValue === 'object' ? $.extend( {},defaults, bindingValue ) : defaults,
 			expand = ko.utils.unwrapObservable(options.expandList),
 			numToShow = expand ? collection.length : options.condensedSize,
 			$element = $(element),
 			$toggleButton = $('<a class="' + options.buttonClass + '">' + _buttonText( options.buttonMoreText ) + '</a>')
-				.toggle(function(){
-					options.expandList(true);
-					$toggleButton.html( _buttonText( options.buttonLessText ) );
-				}, function(){
-					$toggleButton.html( _buttonText( options.buttonMoreText ) );
-					 options.expandList(false);
+				.text( _buttonText( expand ? options.buttonLessText : options.buttonMoreText ))
+				.click(function(){
+					options.expandList(!expand);
 				});
+
 
 		// create valueAccessor that returns a sliced collection
 		function newValueAccessor(){
@@ -71,13 +69,13 @@ ko.bindingHandlers['expandableForEach'] = {
 		}
 		// use the vanilla foreach binding to render the sliced
 		// collection to the DOM
-		ko.bindingHandlers['foreach'].update(element, newValueAccessor, allBindingsAccessor, viewModel, bindingContext);
-	   
-		if(!expand && collection.length > options.condensedSize){
+		var toReturn = ko.bindingHandlers['foreach'].update(element, newValueAccessor, allBindingsAccessor, viewModel, bindingContext);
 
-			$element.parent().find('.' + options.buttonClass).remove();
-			$element.after($toggleButton);
-		}
+		//remove and re-add button each time
+		$element.parent().find('.' + options.buttonClass).remove();
+		$element.after($toggleButton);
+
+		return toReturn;
 
 		function _buttonText(textOrFunc){
 			if(typeof textOrFunc === 'string'){
