@@ -57,7 +57,7 @@ ko.bindingHandlers['expandableForEach'] = {
 			numToShow = expand ? collection.length : options.condensedSize,
 			$element = $(element),
 			$toggleButton = $('<a class="' + options.buttonClass + '">' + _buttonText( options.buttonMoreText ) + '</a>')
-				.text( _buttonText( expand ? options.buttonLessText : options.buttonMoreText ))
+				.html( _buttonText( expand ? options.buttonLessText : options.buttonMoreText ))
 				.click(function(){
 					options.expandList(!expand);
 				});
@@ -72,8 +72,10 @@ ko.bindingHandlers['expandableForEach'] = {
 		var toReturn = ko.bindingHandlers['foreach'].update(element, newValueAccessor, allBindingsAccessor, viewModel, bindingContext);
 
 		//remove and re-add button each time
-		$element.parent().find('.' + options.buttonClass).remove();
-		$element.after($toggleButton);
+		if(collection.length > options.condensedSize){
+			$element.parent().find('.' + options.buttonClass).remove();
+			$element.after($toggleButton);
+		}
 
 		return toReturn;
 
